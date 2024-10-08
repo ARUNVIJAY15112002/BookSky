@@ -4,6 +4,10 @@ let popUpBox = document.querySelector(".popupbox");
 let addBook = document.getElementById("addBook");
 let closeBtn = document.getElementById("closeBtn");
 
+let bookList = [];
+
+console.log(bookList);
+
 showBtn.addEventListener("click", function () {
   popupOverLay.style.display = "block";
   popUpBox.style.display = "block";
@@ -25,12 +29,16 @@ addBook.addEventListener("click", function (event) {
   let div = document.createElement("div");
   div.setAttribute("class", "book-container");
   div.innerHTML = `
-  <h2>${bookTitleIp.value}</h1>
+  <h2>${bookTitleIp.value}</h2>
   <h5>${bookAuthorIp.value}</h5>
   <p>${bookDescriptionInput.value}</p>
-  <button onclick="deleteBook(event)">Delete</button>
+  <button onclick="deleteBook(event)">Delete</button> 
   `;
 
+  bookList.push(div.innerHTML);
+
+  console.log(bookList);
+  localStorage.setItem("BookList", JSON.stringify(bookList));
   bookTitleIp.value = "";
   bookAuthorIp.value = "";
   bookDescriptionInput.value = "";
@@ -41,5 +49,24 @@ addBook.addEventListener("click", function (event) {
 
 function deleteBook(event) {
   event.target.parentElement.remove();
-  console.log(event);
+  bookList = bookList.filter(
+    (book) => book !== event.target.parentElement.innerHTML
+  );
+  localStorage.setItem("BookList", JSON.stringify(bookList));
+  console.log(bookList);
 }
+
+function DisplayRetrivedData() {
+  if (JSON.parse(localStorage.getItem("BookList")) !== null) {
+    bookList = JSON.parse(localStorage.getItem("BookList"));
+    console.log(bookList);
+    for (let i = 0; i < bookList.length; i++) {
+      const div = document.createElement("div");
+      div.setAttribute("class", "book-container");
+      div.innerHTML = bookList[i];
+      container.append(div);
+    }
+  }
+}
+
+DisplayRetrivedData();
